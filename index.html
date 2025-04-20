@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="数字游戏 - 让学习数学变得有趣又简单！适合小学生的数学学习游戏，支持加减乘除运算，寓教于乐。">
+    <meta name="keywords" content="数字游戏, 数学游戏, 小学生数学, 数学学习, 加减乘除, 数学教育, 数学练习">
+    <meta name="author" content="1Link.Fun 科技周刊">
+    <meta name="robots" content="index, follow">
+    <title>数字游戏</title>
+    <style>
+        body {
+            font-family: "Comic Sans MS", Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #fef9e7; /* 柔和的米黄色背景 */
+        }
+        .header {
+            padding: 20px;
+            background-color: #ffeb3b; /* 明亮的黄色背景 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+            color: #333;
+        }
+        .header p {
+            margin: 5px 0 0;
+            font-size: 18px;
+            color: #666;
+        }
+        .game-container {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+        .equation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .equation div {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #ccc;
+            margin: 0 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .equation div[data-type="number"] {
+            border-color: #4CAF50; /* 绿色边框表示数字空格 */
+        }
+        .equation div[data-type="operator"] {
+            border-color: #FF5722; /* 橙色边框表示运算符空格 */
+        }
+        .equation div[data-type="result"] {
+            border-color: #2196F3; /* 蓝色边框表示结果空格 */
+        }
+        .draggable {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            border: 2px solid #ccc;
+            background-color: #ffffff;
+            text-align: center;
+            line-height: 50px;
+            font-size: 24px;
+            cursor: grab;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .draggable[data-type="number"] {
+            color: #4CAF50; /* 绿色数字 */
+            border-color: #4CAF50;
+        }
+        .draggable[data-type="operator"] {
+            color: #FF5722; /* 橙色运算符 */
+            border-color: #FF5722;
+        }
+        .draggable:active {
+            cursor: grabbing;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .instructions {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #e8f5e9; /* 浅绿色背景 */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 18px;
+            color: #333;
+            line-height: 1.6;
+        }
+        .faq, .reviews {
+            margin: 30px auto;
+            width: 90%;
+            max-width: 600px;
+            text-align: left;
+        }
+        .faq h3, .reviews h3 {
+            font-size: 24px;
+            color: #333;
+        }
+        .faq p, .reviews p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+        }
+        footer {
+            margin-top: 30px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>数字游戏</h1>
+        <p>让学习数学变得有趣又简单！</p>
+    </div>
+    <div class="game-container">
+        <div class="equation">
+            <div class="empty" data-type="number" data-value=""></div>
+            <div class="empty" data-type="number" data-value=""></div>
+            <div class="empty" data-type="operator" data-value=""></div>
+            <div class="empty" data-type="number" data-value=""></div>
+            <div class="empty" data-type="number" data-value=""></div>
+            <div>=</div>
+            <div class="empty" data-type="result" data-value=""></div>
+            <div class="empty" data-type="result" data-value=""></div>
+            <div class="empty" data-type="result" data-value=""></div>
+            <div class="empty" data-type="result" data-value=""></div>
+        </div>
+        <div class="result" id="result"></div>
+        <div id="draggables">
+            <!-- Numbers -->
+            <div class="draggable" draggable="true" data-value="0" data-type="number">0</div>
+            <div class="draggable" draggable="true" data-value="1" data-type="number">1</div>
+            <div class="draggable" draggable="true" data-value="2" data-type="number">2</div>
+            <div class="draggable" draggable="true" data-value="3" data-type="number">3</div>
+            <div class="draggable" draggable="true" data-value="4" data-type="number">4</div>
+            <div class="draggable" draggable="true" data-value="5" data-type="number">5</div>
+            <div class="draggable" draggable="true" data-value="6" data-type="number">6</div>
+            <div class="draggable" draggable="true" data-value="7" data-type="number">7</div>
+            <div class="draggable" draggable="true" data-value="8" data-type="number">8</div>
+            <div class="draggable" draggable="true" data-value="9" data-type="number">9</div>
+            <!-- Operators -->
+            <div class="draggable" draggable="true" data-value="+" data-type="operator">+</div>
+            <div class="draggable" draggable="true" data-value="-" data-type="operator">-</div>
+            <div class="draggable" draggable="true" data-value="*" data-type="operator">×</div>
+            <div class="draggable" draggable="true" data-value="/" data-type="operator">÷</div>
+        </div>
+    </div>
+    <div class="instructions">
+        <h3>玩法介绍</h3>
+        <p>1. 从下方拖动数字或运算符到上方的空格中。</p>
+        <p>2. 左边两个框表示第一个数字，中间两个框表示第二个数字，运算符框表示运算操作。</p>
+        <p>3. 等号右边的四个框表示结果。</p>
+        <p>4. 点击框框可以清空内容，重新输入。</p>
+        <p>5. 当公式正确时，会显示“正确！”，否则显示“错误，请重试。”</p>
+    </div>
+    <div class="faq">
+        <h3>常见问题</h3>
+        <p><strong>Q: 这个游戏适合什么年龄段的孩子？</strong></p>
+        <p>A: 本游戏适合6岁以上的孩子，尤其是正在学习基础数学的学生。</p>
+        <p><strong>Q: 游戏支持哪些运算符？</strong></p>
+        <p>A: 游戏支持加法、减法、乘法和除法。</p>
+        <p><strong>Q: 如果输入错误怎么办？</strong></p>
+        <p>A: 点击框框可以清空内容，重新输入。</p>
+    </div>
+    <div class="reviews">
+        <h3>用户评价</h3>
+        <p>“这个游戏太有趣了，我的孩子玩得不亦乐乎！”</p>
+        <p>“既能玩又能学，孩子的数学成绩提高了！”</p>
+        <p>“设计简洁，玩法简单，非常适合小学生。”</p>
+    </div>
+    <footer>
+        &copy; 2025 <a href="https://1link.fun" target="_blank" rel="noopener">1Link.Fun</a>. 版权所有.
+    </footer>
+    <script>
+        const draggables = document.querySelectorAll('.draggable');
+        const emptySlots = document.querySelectorAll('.empty');
+        const resultDisplay = document.getElementById('result');
+
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', () => {
+                draggable.classList.add('dragging');
+            });
+
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('dragging');
+            });
+        });
+
+        emptySlots.forEach(slot => {
+            slot.addEventListener('dragover', e => {
+                e.preventDefault();
+            });
+
+            slot.addEventListener('drop', e => {
+                e.preventDefault();
+                const dragging = document.querySelector('.dragging');
+                if (dragging) {
+                    const slotType = slot.dataset.type;
+                    const draggingType = dragging.dataset.type;
+                    if (
+                        (slotType === 'number' && draggingType === 'number') ||
+                        (slotType === 'operator' && draggingType === 'operator') ||
+                        (slotType === 'result' && draggingType === 'number')
+                    ) {
+                        slot.textContent = dragging.textContent;
+                        slot.dataset.value = dragging.dataset.value;
+                        checkEquation();
+                    }
+                }
+            });
+
+            // 点击清空框框内容
+            slot.addEventListener('click', () => {
+                slot.textContent = '';
+                slot.dataset.value = '';
+                checkEquation();
+            });
+        });
+
+        function checkEquation() {
+            const slots = Array.from(emptySlots);
+
+            // 获取第一个数字（左边两个框框）
+            const num1 = slots
+                .slice(0, 2) // 左边两个框框
+                .map(slot => slot.dataset.value)
+                .join('');
+
+            // 获取运算符（中间的运算符框框）
+            const operator = slots[2]?.dataset.value;
+
+            // 获取第二个数字（中间两个框框）
+            const num2 = slots
+                .slice(3, 5) // 中间两个框框
+                .map(slot => slot.dataset.value)
+                .join('');
+
+            // 获取结果（右边四个框框）
+            const result = slots
+                .slice(5) // 等号右边的四个框框
+                .map(slot => slot.dataset.value)
+                .join('');
+
+            if (num1 && num2 && operator && result) {
+                const calculatedResult = calculate(Number(num1), operator, Number(num2));
+                console.log(`公式: ${num1} ${operator} ${num2} = ${calculatedResult}`);
+                if (calculatedResult === Number(result)) {
+                    resultDisplay.textContent = '正确！';
+                    resultDisplay.style.color = 'green';
+                } else {
+                    resultDisplay.textContent = '错误，请重试。';
+                    resultDisplay.style.color = 'red';
+                }
+            } else {
+                resultDisplay.textContent = '';
+            }
+        }
+
+        function calculate(num1, operator, num2) {
+            switch (operator) {
+                case '+': return num1 + num2;
+                case '-': return num1 - num2;
+                case '*': return num1 * num2;
+                case '/': return num2 !== 0 ? num1 / num2 : NaN;
+                default: return NaN;
+            }
+        }
+    </script>
+</body>
+</html>
